@@ -9,7 +9,6 @@ from sorting import (
     sort_by_luminosity,
     sort_by_saturation,
     sort_by_channel,
-    sort_by_hilbert,
 )
 
 
@@ -21,7 +20,6 @@ METHODS = {
     "red-channel":   lambda rgb, hsv: sort_by_channel(rgb, 0),
     "green-channel": lambda rgb, hsv: sort_by_channel(rgb, 1),
     "blue-channel":  lambda rgb, hsv: sort_by_channel(rgb, 2),
-    "hilbert":       lambda rgb, hsv: sort_by_hilbert(rgb),
 }
 
 
@@ -42,12 +40,14 @@ def sort_pixels(image_path: str, output_path: str, method: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("image", help="Path to image")
-    parser.add_argument("--method", choices=["step", "hex", "luminosity", "saturation", "red-channel", "green-channel", "blue-channel", "hilbert"], default="step")
+    parser.add_argument("--method", choices=[*METHODS.keys(), "all"], default="step")
     args = parser.parse_args()
 
     p = Path(args.image)
     output_dir = Path("output") / p.stem
     output_dir.mkdir(parents=True, exist_ok=True)
-    output = output_dir / f"{args.method}_sorted_{p.name}"
 
-    sort_pixels(args.image, str(output), args.method)
+    methods = METHODS.keys() if args.method == "all" else [args.method]
+    for method in methods:
+        output = output_dir / f"{method}_sorted_{p.name}"
+        sort_pixels(args.image, str(output), method)
