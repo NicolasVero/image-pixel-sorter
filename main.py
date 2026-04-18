@@ -1,8 +1,9 @@
 from PIL import Image
 import numpy as np
+import argparse
 
 
-def sort_pixels(image_path: str, output_path: str, repetitions: int = 8):
+def sort_pixels(image_path: str, output_path: str, method: str):
     image = Image.open(image_path).convert("RGB")
     flat_rgb = np.array(image).reshape(-1, 3)
     flat_hsv = np.array(image.convert("HSV")).reshape(-1, 3)
@@ -38,4 +39,9 @@ def sort_by_step(flat_rgb, flat_hsv, repetitions: int = 8):
 
 
 if __name__ == "__main__":
-    sort_pixels("input.png", "output.png")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("image", help="Path to image")
+    parser.add_argument("--method", choices=["step", "hex"], default="step")
+    args = parser.parse_args()
+
+    sort_pixels(args.image, "sorted_" + args.image, args.method)
