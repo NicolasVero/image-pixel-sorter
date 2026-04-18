@@ -13,22 +13,24 @@ from sorting import (
 )
 
 
+METHODS = {
+    "step":          lambda rgb, hsv: sort_by_step(rgb, hsv),
+    "hex":           lambda rgb, hsv: sort_by_hex(rgb),
+    "luminosity":    lambda rgb, hsv: sort_by_luminosity(rgb),
+    "saturation":    lambda rgb, hsv: sort_by_saturation(hsv),
+    "red-channel":   lambda rgb, hsv: sort_by_channel(rgb, 0),
+    "green-channel": lambda rgb, hsv: sort_by_channel(rgb, 1),
+    "blue-channel":  lambda rgb, hsv: sort_by_channel(rgb, 2),
+    "hilbert":       lambda rgb, hsv: sort_by_hilbert(rgb),
+}
+
+
 def sort_pixels(image_path: str, output_path: str, method: str):
     image = Image.open(image_path).convert("RGB")
     flat_rgb = np.array(image).reshape(-1, 3)
     flat_hsv = np.array(image.convert("HSV")).reshape(-1, 3)
 
-    if method == "step":
-        indices = sort_by_step(flat_rgb, flat_hsv)
-    elif method == "hex":
-        indices = sort_by_hex(flat_rgb)
-    elif method == "luminosity":
-        indices = sort_by_luminosity(flat_rgb)
-    elif method == "saturation":
-        indices = sort_by_saturation(flat_hsv)
-    elif method in ("red-channel", "green-channel", "blue-channel"):
-        channel = {"red-channel": 0, "green-channel": 1, "blue-channel": 2}[method]
-        indices = sort_by_channel(flat_rgb, channel)
+    indices = METHODS[method](flat_rgb, flat_hsv)
 
     sorted_pixels = flat_rgb[indices]
 
