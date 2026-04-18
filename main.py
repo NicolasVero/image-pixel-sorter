@@ -8,12 +8,17 @@ def sort_pixels(image_path: str, output_path: str, method: str):
     flat_rgb = np.array(image).reshape(-1, 3)
     flat_hsv = np.array(image.convert("HSV")).reshape(-1, 3)
 
-    indices = sort_by_step(flat_rgb, flat_hsv)
+    if method == "step":
+        indices = sort_by_step(flat_rgb, flat_hsv)
+    elif method == "hex":
+        indices = sort_by_hex(flat_rgb)
+
     sorted_pixels = flat_rgb[indices]
 
     h_img, w_img = image.size[1], image.size[0]
     result = Image.fromarray(sorted_pixels.reshape(h_img, w_img, 3).astype(np.uint8))
     result.save(output_path)
+
 
 def sort_by_step(flat_rgb, flat_hsv, repetitions: int = 8):
     r = flat_rgb[:, 0] / 255.0
@@ -36,6 +41,12 @@ def sort_by_step(flat_rgb, flat_hsv, repetitions: int = 8):
     is_neutral = (s < 0.15).astype(int)
 
     return np.lexsort((v3, lum2, h2, is_neutral))
+
+
+def sort_by_hex(flat_rgb):
+    flat = flat_rgb.astype(np.int32)
+    hex_values = flat[:,0]*65536 + flat[:,1]*256 + flat[:,2]
+    return np.argsort(hex_values)
 
 
 if __name__ == "__main__":
