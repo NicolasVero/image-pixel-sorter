@@ -16,6 +16,9 @@ def sort_pixels(image_path: str, output_path: str, method: str):
         indices = sort_by_luminosity(flat_rgb)
     elif method == "saturation":
         indices = sort_by_saturation(flat_hsv)
+    elif method in ("red-channel", "green-channel", "blue-channel"):
+        channel = {"red-channel": 0, "green-channel": 1, "blue-channel": 2}[method]
+        indices = sort_by_channel(flat_rgb, channel)
 
     sorted_pixels = flat_rgb[indices]
 
@@ -58,6 +61,10 @@ def sort_by_saturation(flat_hsv):
     return np.argsort(s)
 
 
+def sort_by_channel(flat_rgb, channel: int):
+    return np.argsort(flat_rgb[:, channel])
+
+
 def normalize(flat):
     return flat / 255.0
 
@@ -65,7 +72,7 @@ def normalize(flat):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("image", help="Path to image")
-    parser.add_argument("--method", choices=["step", "hex", "luminosity", "saturation"], default="step")
+    parser.add_argument("--method", choices=["step", "hex", "luminosity", "saturation", "red-channel", "green-channel", "blue-channel", "hilbert"], default="step")
     args = parser.parse_args()
 
     sort_pixels(args.image, "sorted_" + args.image, args.method)
