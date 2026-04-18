@@ -1,4 +1,5 @@
 from PIL import Image
+from pathlib import Path
 import numpy as np
 import argparse
 
@@ -75,4 +76,9 @@ if __name__ == "__main__":
     parser.add_argument("--method", choices=["step", "hex", "luminosity", "saturation", "red-channel", "green-channel", "blue-channel", "hilbert"], default="step")
     args = parser.parse_args()
 
-    sort_pixels(args.image, "sorted_" + args.image, args.method)
+    p = Path(args.image)
+    output_dir = Path("output") / p.stem
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output = output_dir / f"{args.method}_sorted_{p.name}"
+
+    sort_pixels(args.image, str(output), args.method)

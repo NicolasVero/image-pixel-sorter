@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 *.pyo
 
+output/
 *.jpg
 *.png
 *.webp
