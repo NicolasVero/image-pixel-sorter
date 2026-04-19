@@ -5,6 +5,12 @@ __pycache__/
 *.pyo
 
 output/
+*.avif
+*.bmp
+*.gif
+*.jpeg
 *.jpg
 *.png
+*.tif
+*.tiff
 *.webp

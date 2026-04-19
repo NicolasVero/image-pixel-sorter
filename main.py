@@ -40,10 +40,14 @@ def sort_pixels(image_path: str, output_path: str, method: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("image", help="Path to image")
-    parser.add_argument("--method", choices=[*METHODS.keys(), "all"], default="step")
+    parser.add_argument("--method", choices=[*METHODS.keys(), "all"], default="all")
     args = parser.parse_args()
 
     p = Path(args.image)
+    if not p.exists():
+        print(f"Error: file '{p}' not found.")
+        exit(1)
+
     output_dir = Path("output") / p.stem
     output_dir.mkdir(parents=True, exist_ok=True)
 
